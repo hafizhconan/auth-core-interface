@@ -27,6 +27,12 @@ export interface LoginResponse {
     message: string;
 }
 
+export interface TokenResponse {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+}
+
 export interface OtpRequestResponse {
     data: {
         challenge_id: number;
@@ -121,8 +127,8 @@ export const authService = {
         return res.data;
     },
 
-    refreshToken: async (refreshToken: string): Promise<LoginResponse> => {
-        const res = await api.post<AxiosResponse<LoginResponse>>('/auth/refresh', {
+    refreshToken: async (refreshToken: string): Promise<TokenResponse> => {
+        const res = await api.post<AxiosResponse<TokenResponse>>('/auth/token/refresh', {
             refresh_token: refreshToken
         });
         return res.data;
@@ -156,6 +162,12 @@ export const authService = {
     getUserProfile: async (token?: string): Promise<{ data: User; message: string }> => {
         const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         const res = await api.get<AxiosResponse<{ data: User; message: string }>>('/auth/me', config);
+        return res.data;
+    },
+
+    updateUserProfile: async (payload: { display_name: string; email: string; password?: string }, token?: string): Promise<{ data: User; message: string }> => {
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+        const res = await api.put<AxiosResponse<{ data: User; message: string }>>('/auth/me', payload, config);
         return res.data;
     },
 

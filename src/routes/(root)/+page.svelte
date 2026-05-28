@@ -17,13 +17,13 @@
   }
 
   const apps = [
-    { name: 'CRM', desc: 'Pengelolaan data calon siswa dan komunikasi selama proses pendaftaran.', path: '/crm', onClick: null },
-    { name: 'CMS', desc: 'Mengatur konten website seperti informasi, berita, & pengumuman.', path: null, onClick: openCMS },
-    { name: 'Student AMS', desc: 'Sistem akademik untuk siswa, mencakup data belajar, jadwal, & aktivitas sekolah.', path: '/student-ams', onClick: null },
-    { name: 'Teacher AMS', desc: 'Platform guru untuk mengelola kelas, materi, dan aktivitas pembelajaran.', path: '/teacher-ams', onClick: null },
-    { name: 'School Admin', desc: 'Sistem administrasi utama, mengelola operasional sekolah secara menyeluruh.', path: '/school-admin', onClick: null },
-    { name: 'Accounting', desc: 'Pengelolaan keuangan, termasuk pembayaran dan laporan finansial.', path: '/accounting', onClick: null },
-    { name: 'Parking', desc: 'Sistem manajemen parkir untuk kendaraan di lingkungan sekolah.', path: '/parking', onClick: null }
+    { name: 'CRM', desc: 'Pengelolaan data calon siswa dan komunikasi selama proses pendaftaran.', path: '/crm', onClick: null, disabled: false },
+    { name: 'CMS', desc: 'Mengatur konten website seperti informasi, berita, & pengumuman.', path: null, onClick: openCMS, disabled: false },
+    { name: 'Student AMS', desc: 'Sistem akademik untuk siswa, mencakup data belajar, jadwal, & aktivitas sekolah.', path: '/student-ams', onClick: null, disabled: true },
+    { name: 'Teacher AMS', desc: 'Platform guru untuk mengelola kelas, materi, dan aktivitas pembelajaran.', path: '/teacher-ams', onClick: null, disabled: true },
+    { name: 'School Admin', desc: 'Sistem administrasi utama, mengelola operasional sekolah secara menyeluruh.', path: '/school-admin', onClick: null, disabled: true },
+    { name: 'Accounting', desc: 'Pengelolaan keuangan, termasuk pembayaran dan laporan finansial.', path: '/accounting', onClick: null, disabled: true },
+    { name: 'Parking', desc: 'Sistem manajemen parkir untuk kendaraan di lingkungan sekolah.', path: '/parking', onClick: null, disabled: true }
   ];
 </script>
 
@@ -55,6 +55,7 @@
               description={app.desc} 
               onclick={app.onClick}
               icon={app.name.toLowerCase().replace(' ', '-')} 
+              disabled={app.disabled}
             />
           {:else}
             <AppCard 
@@ -62,6 +63,7 @@
               description={app.desc} 
               href={app.path ?? '#'} 
               icon={app.name.toLowerCase().replace(' ', '-')} 
+              disabled={app.disabled}
             />
           {/if}
         {/each}

@@ -16,9 +16,12 @@
 
 	let { form: formProps }: { form: SuperValidated<Infer<typeof loginSchema>> } = $props();
 
+	let isLoading = $state(false);
+
 	const form = superForm(formProps, {
 		validators: zod4Client(loginSchema),
 		onResult: ({ result }) => {
+			isLoading = false;
 			if (result.type === 'redirect') {
 				showToast({
 					type: 'success',
@@ -56,34 +59,19 @@
 			}
 		},
 		onSubmit: ({ formData: payload }) => {
+			isLoading = true;
 			if (browser) {
-				let fingerprint = localStorage.getItem('device_fingerprint');
-				let deviceName = localStorage.getItem('device_name');
-				let platform = localStorage.getItem('platform');
+				const fingerprint = localStorage.getItem('device_fingerprint');
+				const deviceName = localStorage.getItem('device_name');
+				const platform = localStorage.getItem('platform');
 
-				if (!fingerprint) {
-					fingerprint = window.crypto?.randomUUID?.() ?? Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-					localStorage.setItem('device_fingerprint', fingerprint);
-				}
-
-				if (!platform || !deviceName) {
-					const ua = navigator.userAgent;
-					let detectedName = 'Web Browser';
-					if (ua.includes('Chrome')) detectedName = 'Chrome';
-					else if (ua.includes('Firefox')) detectedName = 'Firefox';
-					else if (ua.includes('Safari') && !ua.includes('Chrome')) detectedName = 'Safari';
-					else if (ua.includes('Edge')) detectedName = 'Edge';
-
-					platform = 'web';
-					deviceName = `${detectedName} on ${navigator.platform}`;
-					localStorage.setItem('platform', platform);
-					localStorage.setItem('device_name', deviceName);
-				}
-
-				payload.set('device_fingerprint', fingerprint);
-				payload.set('platform', platform);
-				payload.set('device_name', deviceName);
+				if (fingerprint) payload.set('device_fingerprint', fingerprint);
+				if (platform) payload.set('platform', platform);
+				if (deviceName) payload.set('device_name', deviceName);
 			}
+		},
+		onError: () => {
+			isLoading = false;
 		}
 	});
 
@@ -131,11 +119,11 @@
 		<Form.Field {form} name="username">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-[13px] font-bold text-[#333333]">Informasi Akun</Form.Label>
+					<Form.Label class="text-[13px] font-bold text-[#333333]">Email</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.username}
-						placeholder="Masukkan NIS, NIP, atau nomor HP."
+						placeholder="Masukkan email"
 						class="h-11 rounded-lg border-zinc-200 bg-white text-[#333333] placeholder:text-zinc-400 shadow-sm"
 					/>
 				{/snippet}
@@ -187,8 +175,13 @@
 		</div>
 
 		<div class="pt-2">
-			<Button type="submit" class="h-11 w-full rounded-lg bg-[#9c917f] text-[15px] font-semibold text-white shadow-sm hover:bg-[#867c6c]">
-				Masuk Sekarang
+			<Button type="submit" disabled={isLoading} class="h-11 w-full rounded-lg bg-[#9c917f] text-[15px] font-semibold text-white shadow-sm hover:bg-[#867c6c]">
+				{#if isLoading}
+					<span class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+					Memuat...
+				{:else}
+					Masuk Sekarang
+				{/if}
 			</Button>
 		</div>
 

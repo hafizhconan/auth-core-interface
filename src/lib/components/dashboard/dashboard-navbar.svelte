@@ -4,8 +4,11 @@
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar/index';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
 	import type { User } from '$lib/types';
+	import ProfileModal from '../form/profile-modal.svelte';
 
 	let { user }: { user: User } = $props();
+
+	let isProfileModalOpen = $state(false);
 
 	// Function to get initials from display name
 	const getInitials = (name: string) => {
@@ -53,11 +56,11 @@
 				<!-- User Avatar Placeholder -->
 				<Avatar class="h-9 w-9 overflow-hidden rounded-full border border-white/10 bg-zinc-800">
 					<AvatarImage src={user.avatar_url || ''} alt={user.display_name} />
-					<AvatarFallback class="text-xs font-semibold text-white">{getInitials(user.display_name)}</AvatarFallback>
+					<AvatarFallback class="text-xs font-semibold text-black">{getInitials(user.display_name)}</AvatarFallback>
 				</Avatar>
 				<div class="hidden text-left sm:block">
 					<p class="text-sm font-semibold leading-none text-white tracking-tight">{user.display_name}</p>
-					<p class="mt-1 text-xs text-zinc-400 font-medium">Super Admin</p>
+					<p class="mt-1 text-xs text-zinc-400 font-medium">{user.email}</p>
 				</div>
 				<ChevronDown class="h-4 w-4 text-zinc-400 ml-1" />
 			</DropdownMenu.Trigger>
@@ -65,7 +68,7 @@
 				<DropdownMenu.Label class="px-2 py-2 text-[12px] font-medium text-zinc-500 uppercase tracking-wider">Akun Saya</DropdownMenu.Label>
 				<DropdownMenu.Separator class="my-1 h-px bg-white/5" />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item class="flex items-center rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-white/5 cursor-pointer">
+					<DropdownMenu.Item onclick={() => isProfileModalOpen = true} class="flex items-center rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-white/5 cursor-pointer">
 						<UserIcon class="mr-3 h-4 w-4 text-zinc-400" />
 						<span>Profil</span>
 					</DropdownMenu.Item>
@@ -87,3 +90,5 @@
 		</DropdownMenu.Root>
 	</div>
 </nav>
+
+<ProfileModal bind:open={isProfileModalOpen} {user} />
